@@ -4,31 +4,103 @@
 
 #include "evp_pkey_test.h"
 
+static int HexStrTobyte(char* str, unsigned char* out, unsigned int* outlen)
+{
+	char* p = str;
+	char high = 0, low = 0;
+	int tmplen = strlen(p), cnt = 0;
+	tmplen = strlen(p);
+	while (cnt < (tmplen / 2))
+	{
+		high = ((*p > '9') && ((*p <= 'F') || (*p <= 'f'))) ? *p - 48 - 7 : *p - 48;
+		low = (*(++p) > '9' && ((*p <= 'F') || (*p <= 'f'))) ? *(p)-48 - 7 : *(p)-48;
+		out[cnt] = ((high & 0x0f) << 4 | (low & 0x0f));
+		p++;
+		cnt++;
+	}
+	if (tmplen % 2 != 0) out[cnt] = ((*p > '9') && ((*p <= 'F') || (*p <= 'f'))) ? *p - 48 - 7 : *p - 48;
+
+	if (outlen != NULL) *outlen = tmplen / 2 + tmplen % 2;
+	return tmplen / 2 + tmplen % 2;
+}
+
+
 EVP_PKEY* gen_evp_pkey()
 {
-
+#if 0
     //     EVP_PKEY_CTX *ctx;
     EVP_PKEY *pkey = NULL;
+    unsigned int len =0;
+    unsigned char rawprikey[33] ={0};
+    HexStrTobyte((char*)"00bb1b06660e81271c51db324707073c2c826baed0cd14e99d8933ed300fe8cbdf",rawprikey,&len);
+    printf("the len is: %d\r\n",len);
+    for(int i=0;i<len;i++)
+    {
+        printf("%02x ",rawprikey[i]);
+    }
 
-    unsigned char rawprikey[32] ={0};
-    pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_SM2, 0,
-                                        rawprikey, 32);
+    printf("\r\n");
+
+    unsigned char rawpubkey[64] = {0};
+    //HexStrTobyte((char*)"dc73ae455cf8abd0f7f68e5daa8b48f47ddb93eb7e42cb3d932f3203177e9866b3ad10a3742e6aca4770a7cbefd974edbd0a5c985f23e2bd0ef1329b707a2f53",rawpubkey,&len);
+
+    pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_SM2, 0, rawprikey, len);
+    //pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_SM2, 0, rawpubkey, 64);
+    if(pkey == 0)
+    {
+        printf("the new raw public key error!\r\n");
+
+    }
+    
+
     return pkey;
-#if 0
+#endif    
+#if 1
+    EVP_PKEY* pkey = 0;
+    EVP_PKEY_CTX* ctx;
+
+     unsigned char priv[128] = {0};
+    size_t len = 0;
+
+   unsigned char out[128];
+    unsigned char out2[128] ={0};
+ 
     //ctx = EVP_PKEY_CTX_new_from_name(libctx, "SM2", NULL);
     ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_SM2, NULL);
     if (!ctx)
+    {
+        printf("the new ctx is error \r\n");
         goto error;
+    }
     if (EVP_PKEY_keygen_init(ctx) <= 0)
+    {
+        printf("the keygen init is error \r\n");
         goto error;
+    }
         /* Error */
 
     /* Generate key */
     if (EVP_PKEY_keygen(ctx, &pkey) <= 0)
+    {
+        printf("the keygen is error \r\n");
         goto error;
+    }
         /* Error */
-    
-    
+   
+    len = do_encrypt(pkey, out, (const unsigned char*)"1234",4);
+  
+     len = do_decrypt(pkey, out2, out,len);
+    out2[len] = 0;
+     printf("%s \r\n",out2);
+
+    len = 128;
+    EVP_PKEY_get_raw_private_key(pkey,priv,&len);
+    printf("the priv key len is: %d\r\n",(int)len);
+    for(int i=0;i<len;i++)
+    {
+        printf("%02x ",priv[i]);
+    }
+    printf("\r\n");
 error:
     if(ctx)
         EVP_PKEY_CTX_free(ctx);
@@ -105,4 +177,22 @@ int ds_verify(EVP_PKEY* pkey, const unsigned char* message,
     EVP_PKEY_CTX_free(sctx);
     EVP_MD_CTX_free(md_ctx_verify);
     return 0;
+}
+
+void test_sm2()
+{
+    EVP_PKEY* pkey = gen_evp_pkey();
+
+    unsigned char out[128] = {0};
+    unsigned char in[256];
+    size_t inlen =0;
+
+    HexStrTobyte((char*)"594db4130a40cff748678554ea10c0beda0ec881f1a896a4bc2f1ad847fa2de1ac0cac00cd52fd8efa2eb97093fce5c6227a7836f67086b448f6ab421a70aababbabd54b27c3bf1f600d9c03086b0f193b7090a382bb6610183c57fc4fe3b13cd59e157058eb679d69bf",
+    in,(unsigned int*)&inlen);
+    printf("the inlen is: %d\r\n",(int)inlen);
+
+    do_decrypt( pkey,out, in, inlen);
+
+    printf("the plaintext is: %s\r\n",out);
+    
 }

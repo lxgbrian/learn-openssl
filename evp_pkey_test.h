@@ -3,6 +3,8 @@
 #include <openssl/evp.h>
 #include <openssl/ec.h>
 
+void test_sm2();
+
 EVP_PKEY* gen_evp_pkey();
 
 size_t do_encrypt(EVP_PKEY* key, unsigned char* out, const unsigned char* in,
