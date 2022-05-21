@@ -102,3 +102,31 @@ cleanup:
 
      return result;  
 }
+
+int digestTest(char* name,char* msg)
+ {
+     EVP_MD_CTX *mdctx;
+     const EVP_MD *md;
+    
+     unsigned char md_value[EVP_MAX_MD_SIZE];
+     unsigned int md_len, i;
+ 
+     
+     md = EVP_get_digestbyname(name);
+     if (md == NULL) {
+         printf("Unknown message digest %s\n",name);
+     }
+ 
+     mdctx = EVP_MD_CTX_new();
+     EVP_DigestInit_ex2(mdctx, md, NULL);
+     EVP_DigestUpdate(mdctx, msg, strlen(msg));
+     EVP_DigestFinal_ex(mdctx, md_value, &md_len);
+     EVP_MD_CTX_free(mdctx);
+ 
+     printf("Digest is: ");
+     for (i = 0; i < md_len; i++)
+         printf("%02x", md_value[i]);
+     printf("\n");
+    
+    return 1;
+ }
