@@ -4,4 +4,6 @@
 
 int evp_test_digest();
 
+int digestTest(char* name,char* msg);
+
 #endif
