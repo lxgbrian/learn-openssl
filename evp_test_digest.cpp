@@ -127,5 +127,6 @@ int digestTest(char* name,char* msg)
      for (i = 0; i < md_len; i++)
          printf("%02x", md_value[i]);
      printf("\n");
- 
+    
+    return 1;
  }
