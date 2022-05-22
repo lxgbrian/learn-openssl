@@ -7,7 +7,7 @@ set(OPENSSL_INC_PATH /usr/local/ssl/include)
 INCLUDE_DIRECTORIES(. ${OPENSSL_INC_PATH})
 
 set(OPENSSL_LIB_PATH /usr/local/ssl/lib64)
-link_directories(. ${OPENSSL_LIB_PATH})
+link_directories( ${OPENSSL_LIB_PATH})
 
 
 AUX_SOURCE_DIRECTORY(. DIR_SRCS)
