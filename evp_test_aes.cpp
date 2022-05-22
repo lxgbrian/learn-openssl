@@ -1,8 +1,8 @@
 #include <iostream>
 #include <iomanip>
-
+#include <openssl/pkcs7.h>
 #include <openssl/evp.h>
-
+#include "util.h"
 #include "evp_test_aes.h"
 
 const static unsigned char test_key[16] ={0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,
@@ -11,11 +11,9 @@ const static unsigned char test_key[16] ={0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x0
 const static unsigned char test_iv[16] ={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
                                             0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
-const static unsigned char test_plain_text[32] ={0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
-                                            0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
-                                            0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
+const static unsigned char test_plain_text[16] ={0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
                                             0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01};
-int evp_test_aes()
+int evp_test_sync_enc(const char* algo,int num)
 {
     OSSL_LIB_CTX* libctx = NULL;
     EVP_CIPHER_CTX* ctx = NULL;
@@ -25,6 +23,10 @@ int evp_test_aes()
     int out_len = 0;
 
     int result = 0;
+
+    long start;
+    long end ;
+
 
     libctx = OSSL_LIB_CTX_new();
     if(libctx == NULL){
@@ -39,7 +41,7 @@ int evp_test_aes()
         goto cleanup;
     }
 
-    cipher = EVP_CIPHER_fetch(libctx,"aes-128-ecb",NULL);
+    cipher = EVP_CIPHER_fetch(libctx,algo,/*"aes-128-ecb",*/NULL);
     if(cipher == NULL)
     {
         std::cout << "the EVP_CIPHER_fetch() faile." << std::endl;
@@ -52,13 +54,18 @@ int evp_test_aes()
         goto cleanup;
     }
 
-
-    if(EVP_EncryptUpdate(ctx,test_output,&out_len,test_plain_text,sizeof(test_plain_text)) == 0)
+    start = timestamp();
+    for(int i=0;i<num;i++)
     {
-        std::cout << "the EVP_EncryptUpdate() failed." << std::endl;
-        goto cleanup;
+
+        if(EVP_EncryptUpdate(ctx,test_output,&out_len,test_plain_text,sizeof(test_plain_text)) == 0)
+        {
+            std::cout << "the EVP_EncryptUpdate() failed." << std::endl;
+            goto cleanup;
+        }
     }
-    
+    end = timestamp();
+    std::cout << "calc " << num << " the " << algo << " elapsed: " << end -start << std::endl;
     std::cout << "the output len is : " << out_len << std::endl;
 
 
