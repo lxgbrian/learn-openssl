@@ -13,8 +13,8 @@
 int main()
 {
     
-    test_sm2();
-    
+    //test_sm2();
+    evp_test_sync_enc("sm4",1000*1000);
     /*
     evp_test_aes();
 
