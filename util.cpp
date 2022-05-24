@@ -33,7 +33,7 @@ int HexStrTobyte(char* str, unsigned char* out, unsigned int* outlen)
 	return tmplen / 2 + tmplen % 2;
 }
 
-int  byteToHexStr(unsigned char byte_arr[], int arr_len, char* HexStr, int* HexStrLen) {
+int  byteToHexStr(unsigned char* byte_arr, int arr_len, char* HexStr, int* HexStrLen) {
 	int  i, index = 0;
 	for (i = 0; i < arr_len; i++)
 	{
