@@ -5,9 +5,17 @@
 
 #include "util.h"
 #include "test_oid.h"
+typedef struct oid_test_st{
+        int ret;
+        char s;
+};
 
-void test_oid()
+
+
+OID_TEST* test_oid()
 {
+    static struct oid_test_st g_oid_test;
+
     unsigned char out[256];
 
     ASN1_OBJECT *obj = OBJ_nid2obj(NID_SM2_with_SM3);
@@ -21,4 +29,6 @@ void test_oid()
     out[hexlen ] = 0;
 
     printf("the obj data is: %s\r\n",out);
+
+    return (OID_TEST*)&g_oid_test;
 }

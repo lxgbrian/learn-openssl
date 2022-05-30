@@ -3,7 +3,9 @@
 #ifdef __cplusplus
     extern "C"{
 #endif        
-        void test_oid(void);
+    typedef struct test_oid_st OID_TEST;
+
+    OID_TEST* test_oid(void);
 
 #ifdef __cplusplus        
     }

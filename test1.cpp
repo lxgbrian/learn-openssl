@@ -15,10 +15,10 @@
 int main()
 {
     
-   test_oid();
+   //test_oid();
 
     //test_sm2();
-    //evp_test_sync_enc("sm4",1000*1000);
+    evp_test_sync_enc("sm4",1000*10000);
     /*
     evp_test_aes();
 
