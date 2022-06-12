@@ -12,13 +12,29 @@
 #include "util.h"
 #include "test_oid.h"
 
+union Ua{
+    int a;
+    unsigned char d[4];
+};
+
 int main()
 {
+    Ua x;
+    x.a = 0x11223344;
+    for(int i=0;i<4;i++)
+        std::cout << std::hex << (x.d[i]&0xFF) << std::endl;
+
+    int tlen = 32;
+    std::cout << "the tlen: " << tlen << std::endl;
+    {
+        unsigned long tlen = 64;
+        std::cout << "the tlen: " << tlen << std::endl;
+    }
     
    //test_oid();
 
     //test_sm2();
-    evp_test_sync_enc("sm4",1000*10000);
+    //evp_test_sync_enc("sm4",1000*10000);
     /*
     evp_test_aes();
 
