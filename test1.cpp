@@ -3,6 +3,8 @@
 #include <openssl/evp.h>
 #include <openssl/core_names.h>
 
+#include <string.h>
+
 #include "evp_test_digest.h"
 #include "evp_test_aes.h"
 #include "evp_test_rand.h"
@@ -12,24 +14,13 @@
 #include "util.h"
 #include "test_oid.h"
 
-union Ua{
-    int a;
-    unsigned char d[4];
-};
 
 int main()
 {
-    Ua x;
-    x.a = 0x11223344;
-    for(int i=0;i<4;i++)
-        std::cout << std::hex << (x.d[i]&0xFF) << std::endl;
-
-    int tlen = 32;
-    std::cout << "the tlen: " << tlen << std::endl;
-    {
-        unsigned long tlen = 64;
-        std::cout << "the tlen: " << tlen << std::endl;
-    }
+   
+    
+    
+    
     
    //test_oid();
 
