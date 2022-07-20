@@ -48,33 +48,36 @@ int evp_test_sync_enc(const char* algo,int num)
         goto cleanup;
     }
 
-    if( EVP_EncryptInit(ctx,cipher,test_key,test_iv) == 0)
-    {
-        std::cout << "the EVP_EncryptInit failed." << std::endl;
-        goto cleanup;
-    }
-
     start = timestamp();
-    for(int i=0;i<num;i++)
+    for(int i =0;i<num;i++)
     {
+        if( EVP_EncryptInit(ctx,cipher,test_key,test_iv) == 0)
+        {
+            std::cout << "the EVP_EncryptInit failed." << std::endl;
+            goto cleanup;
+        }
 
+    
+    
         if(EVP_EncryptUpdate(ctx,test_output,&out_len,test_plain_text,sizeof(test_plain_text)) == 0)
         {
             std::cout << "the EVP_EncryptUpdate() failed." << std::endl;
             goto cleanup;
         }
+    
+    
+
+
+        if(EVP_EncryptFinal_ex(ctx,test_output+out_len,&out_len) == 0)
+        {
+            std::cout << "the EVP_EncryptFinal() failed." << std::endl;
+            goto cleanup;
+        }
     }
+    
     end = timestamp();
     std::cout << "calc " << num << " the " << algo << " elapsed: " << end -start << std::endl;
     std::cout << "the output len is : " << out_len << std::endl;
-
-
-    if(EVP_EncryptFinal_ex(ctx,test_output+out_len,&out_len) == 0)
-    {
-        std::cout << "the EVP_EncryptFinal() failed." << std::endl;
-        goto cleanup;
-    }
-
      std::cout << "the output len is : " << out_len << std::endl;
 
     for(int i=0;i<sizeof(test_output);i++){

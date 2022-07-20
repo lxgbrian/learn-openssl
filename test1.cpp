@@ -3,6 +3,8 @@
 #include <openssl/evp.h>
 #include <openssl/core_names.h>
 
+#include <string.h>
+
 #include "evp_test_digest.h"
 #include "evp_test_aes.h"
 #include "evp_test_rand.h"
@@ -12,13 +14,18 @@
 #include "util.h"
 #include "test_oid.h"
 
+
 int main()
 {
+   
     
-   test_oid();
+    
+    
+    
+   //test_oid();
 
     //test_sm2();
-    //evp_test_sync_enc("sm4",1000*1000);
+    //evp_test_sync_enc("sm4",1000*10000);
     /*
     evp_test_aes();
 
