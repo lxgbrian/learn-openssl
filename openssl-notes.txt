@@ -1,0 +1,393 @@
+导出公钥数据：
+openssl x509 -in 1.CER -pubkey
+
+计算hash值
+openssl dgst -sha1 -hex t1.txt
+SHA1(t1.txt)= 12dada1fff4d4787ade3333147202c3b443e376f
+
+生成随机数
+openssl rand -hex 16
+
+生成sm2私钥
+openssl ecparam -genkey -name SM2 -out priv.key
+openssl ec -in priv.key -pubout -out pub.key
+
+openssl ecparam -name SM2 -genkey -out sm2.key
+openssl ec -in sm2.key -pubout -out sm2.pubkey
+openssl dgst -sm3 -sign sm2.key -out sm2.sig readme.txt
+
+When performance is in concern, use BN_CTX to save the overhead of BIGNUM creation by passing it to functions that
+
+require BIGNUM structures to hold temporary big numbers, and
+are called sequentially to perform certain bignum operations, or
+are repeatedly called in loops.
+Be aware that there is a limitation for the number of bignums stored in BN_CTX. If performance is not an issue, then using
+
+bn = BN_new();
+if (bn)
+BN_free(bn);
+is just fine.
+
+
+ECC	ECC算法标识	1.2.840.10045.2.1
+SM2	SM2算法标识	1.2.156.10197.1.301
+SM3withSM2	SM3的SM2签名	1.2.156.10197.1.501
+SHA1withSM2	SHA1的SM2签名	1.2.156.10197.1.502
+SHA256withSM2	SHA256的SM2签名	1.2.156.10197.1.503
+
+这些曲线被定义在 ec_curve.c 中，如 NID_sm2 (也叫做 NID_sm2p256v1) 的定义如下：
+
+static const struct {
+    EC_CURVE_DATA h;
+    unsigned char data[0 + 32 * 6];
+} _EC_sm2p256v1 = {
+    {
+       NID_X9_62_prime_field, 0, 32, 1
+    },
+    {
+        /* no seed */
+
+        /* p */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        /* a */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc,
+        /* b */
+        0x28, 0xe9, 0xfa, 0x9e, 0x9d, 0x9f, 0x5e, 0x34, 0x4d, 0x5a, 0x9e, 0x4b,
+        0xcf, 0x65, 0x09, 0xa7, 0xf3, 0x97, 0x89, 0xf5, 0x15, 0xab, 0x8f, 0x92,
+        0xdd, 0xbc, 0xbd, 0x41, 0x4d, 0x94, 0x0e, 0x93,
+        /* x */
+        0x32, 0xc4, 0xae, 0x2c, 0x1f, 0x19, 0x81, 0x19, 0x5f, 0x99, 0x04, 0x46,
+        0x6a, 0x39, 0xc9, 0x94, 0x8f, 0xe3, 0x0b, 0xbf, 0xf2, 0x66, 0x0b, 0xe1,
+        0x71, 0x5a, 0x45, 0x89, 0x33, 0x4c, 0x74, 0xc7,
+        /* y */
+        0xbc, 0x37, 0x36, 0xa2, 0xf4, 0xf6, 0x77, 0x9c, 0x59, 0xbd, 0xce, 0xe3,
+        0x6b, 0x69, 0x21, 0x53, 0xd0, 0xa9, 0x87, 0x7c, 0xc6, 0x2a, 0x47, 0x40,
+        0x02, 0xdf, 0x32, 0xe5, 0x21, 0x39, 0xf0, 0xa0,
+        /* order */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0x72, 0x03, 0xdf, 0x6b, 0x21, 0xc6, 0x05, 0x2b,
+        0x53, 0xbb, 0xf4, 0x09, 0x39, 0xd5, 0x41, 0x23,
+    }
+};
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+static const struct {
+    EC_CURVE_DATA h;
+    unsigned char data[0 + 32 * 6];
+} _EC_sm2p256v1 = {
+    {
+       NID_X9_62_prime_field, 0, 32, 1
+    },
+    {
+        /* no seed */
+ 
+        /* p */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        /* a */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc,
+        /* b */
+        0x28, 0xe9, 0xfa, 0x9e, 0x9d, 0x9f, 0x5e, 0x34, 0x4d, 0x5a, 0x9e, 0x4b,
+        0xcf, 0x65, 0x09, 0xa7, 0xf3, 0x97, 0x89, 0xf5, 0x15, 0xab, 0x8f, 0x92,
+        0xdd, 0xbc, 0xbd, 0x41, 0x4d, 0x94, 0x0e, 0x93,
+        /* x */
+        0x32, 0xc4, 0xae, 0x2c, 0x1f, 0x19, 0x81, 0x19, 0x5f, 0x99, 0x04, 0x46,
+        0x6a, 0x39, 0xc9, 0x94, 0x8f, 0xe3, 0x0b, 0xbf, 0xf2, 0x66, 0x0b, 0xe1,
+        0x71, 0x5a, 0x45, 0x89, 0x33, 0x4c, 0x74, 0xc7,
+        /* y */
+        0xbc, 0x37, 0x36, 0xa2, 0xf4, 0xf6, 0x77, 0x9c, 0x59, 0xbd, 0xce, 0xe3,
+        0x6b, 0x69, 0x21, 0x53, 0xd0, 0xa9, 0x87, 0x7c, 0xc6, 0x2a, 0x47, 0x40,
+        0x02, 0xdf, 0x32, 0xe5, 0x21, 0x39, 0xf0, 0xa0,
+        /* order */
+        0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0x72, 0x03, 0xdf, 0x6b, 0x21, 0xc6, 0x05, 0x2b,
+        0x53, 0xbb, 0xf4, 0x09, 0x39, 0xd5, 0x41, 0x23,
+    }
+};
+
+PEM格式
+PEM格式是证书颁发机构颁发证书的最常见格式.PEM证书通常具有扩展名，例如.pem，.crt，.cer和.key。它们是Base64编码的ASCII文件，包含“----- BEGIN CERTIFICATE -----”和“----- END CERTIFICATE -----”语句。服务器证书，中间证书和私钥都可以放入PEM格式。
+
+Apache和其他类似服务器使用PEM格式证书。几个PEM证书，甚至私钥，可以包含在一个文件中，一个在另一个文件之下，但是大多数平台（例如Apache）希望证书和私钥位于单独的文件中。
+
+DER格式
+DER格式只是证书的二进制形式，而不是ASCII PEM格式。它有时会有.der的文件扩展名，但它的文件扩展名通常是.cer所以判断DER .cer文件和PEM .cer文件之间区别的唯一方法是在文本编辑器中打开它并查找BEGIN / END语句。所有类型的证书和私钥都可以用DER格式编码。DER通常与Java平台一起使用。SSL转换器只能将证书转换为DER格式。如果您需要将私钥转换为DER，请使用此页面上的OpenSSL命令。
+
+PKCS＃7 / P7B格式
+PKCS＃7或P7B格式通常以Base64 ASCII格式存储，文件扩展名为.p7b或.p7c。P7B证书包含“----- BEGIN PKCS7 -----”和“----- END PKCS7 -----”语句。P7B文件仅包含证书和链证书，而不包含私钥。多个平台支持P7B文件，包括Microsoft Windows和Java Tomcat。
+
+PKCS＃12 / PFX格式
+PKCS＃12或PFX格式是二进制格式，用于将服务器证书，任何中间证书和私钥存储在一个可加密文件中。PFX文件通常具有扩展名，例如.pfx和.p12。PFX文件通常在Windows计算机上用于导入和导出证书和私钥。
+
+将PFX文件转换为PEM格式时，OpenSSL会将所有证书和私钥放入一个文件中。您需要在文本编辑器中打开该文件，并将每个证书和私钥（包括BEGIN / END语句）复制到其各自的文本文件中，并将它们分别保存为certificate.cer，CACert.cer和privateKey.key。
+
+OpenSSL命令在您的计算机上转换SSL证书
+强烈建议您使用OpenSSL在自己的计算机上转换为.pfx文件，以便在那里保留私钥。使用以下OpenSSL命令将SSL证书转换为您自己计算机上的不同格式：
+
+OpenSSL转换PEM
+将PEM转换为DER
+
+openssl x509 -outform der -in certificate.pem -out certificate.der
+
+将PEM转换为P7B
+
+openssl crl2pkcs7 -nocrl -certfile certificate.cer -out certificate.p7b -certfile CACert.cer
+
+将PEM转换为PFX
+
+openssl pkcs12 -export -out certificate.pfx -inkey privateKey.key -in certificate.crt -certfile CACert.crt
+
+OpenSSL转换DER
+将DER转换为PEM
+
+openssl x509 -inform der -in certificate.cer -out certificate.pem
+
+OpenSSL转换P7B
+将P7B转换为PEM
+
+openssl pkcs7 -print_certs -in certificate.p7b -out certificate.cer
+
+将P7B转换为PFX
+
+openssl pkcs7 -print_certs -in certificate.p7b -out certificate.cer
+
+openssl pkcs12 -export -in certificate.cer -inkey privateKey.key -out certificate.pfx -certfile CACert.cer
+
+OpenSSL转换PFX
+将PFX转换为PEM
+
+openssl pkcs12 -in certificate.pfx -out certificate.cer -nodes
+
+  Bit8-bit7
+用来标示 TAG 类型，共有四种，分别是universal(00)、application(01)、context-specific(10)和private(11)。
+
+这两位为universal（00）时，bit5-bit1的值表示不同的universal的值：
+
+标记（TAG）　  对应类型
+
+[UNIVERSAL 1] BOOLEAN [有两个值:false或true]
+
+[UNIVERSAL 2] INTEGER [整型值]
+
+[UNIVERSAL 3] BIT STRING [0位或多位]
+
+[UNIVERSAL 4] OCTET STRING [0字节或多字节]
+
+[UNIVERSAL 5] NULL
+
+[UNIVERSAL 6] OBJECT IDENTIFIER [相应于一个对象的独特标识数字]
+
+[UNIVERSAL 7] OBJECT DESCRIPTOR  [一个对象的简称]
+
+[UNIVERSAL 8] EXTERNAL, INSTANCE OF [ASN.1没有定义的数据类型]
+
+[UNIVERSAL 9] REAL [实数值]
+
+[UNIVERSAL 10] ENUMERATED [数值列表，这些数据每个都有独特的标识符，作为ASN.1定义数据类型的一部分]
+
+[UNIVERSAL 12] UTF8String
+
+[UNIVERSAL 13] RELATIVE-OID
+
+[UNIVERSAL 16] SEQUENCE, SEQUENCE OF [有序数列，SEQUENCE里面的每个数值都可以是不同类型的，而SEQUENCE OF里是0个或多个类型相同的数据]
+
+[UNIVERSAL 17] SET, SET OF [无序数列，SET里面的每个数值都可以是不同类型的，而SET OF里是0个或多个类型相同的数据]
+
+[UNIVERSAL 18] NumericString [0－9以及空格]
+
+[UNIVERSAL 19] PrintableString [A-Z、a-z、0-9、空格以及符号'()+,-./:=?]
+
+[UNIVERSAL 20] TeletexString, T61String
+
+[UNIVERSAL 21] VideotexString
+
+[UNIVERSAL 22] IA5String
+
+[UNIVERSAL 23] UTCTime [统一全球时间格式]
+
+[UNIVERSAL 24] GeneralizedTime
+
+[UNIVERSAL 25] GraphicString
+
+[UNIVERSAL 26] VisibleString, ISO646String
+
+[UNIVERSAL 27] GeneralString
+
+[UNIVERSAL 28] UniversalString
+
+[UNIVERSAL 29] CHARACTER STRING
+
+[UNIVERSAL 30] BMPString
+
+[UNIVERSAL 31]... reserved for future use
+
+这两位为context-specific（10）时，bit5-bit1的值表示特殊内容：
+
+[0] –- 表示证书的版本
+
+[1] –- issuerUniqueID,表示证书发行者的唯一id
+
+[2] –- subjectUniqueID,表示证书主体的唯一id
+
+[3] –- 表示证书的扩展字段
+
+1.2.        bit6
+表示是否为结构类型(1位结构类型)；0则表明编码类型是简单类型。
+
+1.3.        bit5-bit1
+是类型的TAG值。根据bit8-bit7的不同值有不同的含义，具体含义见上面的描述。
+
+如 SEQUENCE 类型数据块，其TAG类型位UNIVERSAL（00）,属于结构类型（1），TAG值为16（10000）所以其类型标示字段值为（00110000），即为0x30。
+
+再如，证书扩展字段类型的数据块，TAG类型为（10），属结构类型（1），TAG的值为3（00011），所以其类型标示字段值为（10100011），即为0xA3。
+
+tatic const struct {
+	unsigned char hash;
+	enum OID oid : 8;
+} oid_search_table[OID__NR] = {
+	[  0] = {  10, OID_title                               }, // 55040c
+	[  1] = {  23, OID_issuerAltName                       }, // 551d12
+	[  2] = {  23, OID_initials                            }, // 55042b
+	[  3] = {  29, OID_md2WithRSAEncryption                }, // 2a864886f70d010102
+	[  4] = {  30, OID_md2                                 }, // 2a864886f70d0202
+	[  5] = {  32, OID_id_dsa_with_sha1                    }, // 2a8648ce2e0403
+	[  6] = {  35, OID_contentType                         }, // 2a864886f70d010903
+	[  7] = {  35, OID_sha256WithRSAEncryption             }, // 2a864886f70d01010b
+	[  8] = {  36, OID_authorityKeyIdentifier              }, // 551d23
+	[  9] = {  37, OID_description                         }, // 55040d
+	[ 10] = {  43, OID_id_dsa                              }, // 2a8648ce380401
+	[ 11] = {  51, OID_msIndividualSPKeyPurpose            }, // 2b060104018237020115
+	[ 12] = {  54, OID_basicConstraints                    }, // 551d13
+	[ 13] = {  54, OID_generationalQualifier               }, // 55042c
+	[ 14] = {  60, OID_md3WithRSAEncryption                }, // 2a864886f70d010103
+	[ 15] = {  64, OID_signed_data                         }, // 2a864886f70d010702
+	[ 16] = {  77, OID_countryName                         }, // 550406
+	[ 17] = {  77, OID_id_ecdsa_with_sha1                  }, // 2a8648ce3d0401
+	[ 18] = {  83, OID_sha256                              }, // 608648016503040201
+	[ 19] = {  85, OID_smimeCapabilites                    }, // 2a864886f70d01090f
+	[ 20] = {  87, OID_sha1                                }, // 2b0e03021a
+	[ 21] = {  97, OID_email_address                       }, // 2a864886f70d010901
+	[ 22] = { 106, OID_extKeyUsage                         }, // 551d25
+	[ 23] = { 106, OID_msPeImageDataObjId                  }, // 2b06010401823702010f
+	[ 24] = { 110, OID_locality                            }, // 550407
+	[ 25] = { 126, OID_rsaEncryption                       }, // 2a864886f70d010101
+	[ 26] = { 132, OID_smimeAuthenticatedAttrs             }, // 2a864886f70d010910020b
+	[ 27] = { 142, OID_id_ecPublicKey                      }, // 2a8648ce3d0201
+	[ 28] = { 142, OID_sha224WithRSAEncryption             }, // 2a864886f70d01010e
+	[ 29] = { 143, OID_stateOrProvinceName                 }, // 550408
+	[ 30] = { 146, OID_subjectKeyIdentifier                }, // 551d0e
+	[ 31] = { 157, OID_sha512                              }, // 608648016503040203
+	[ 32] = { 160, OID_data                                }, // 2a864886f70d010701
+	[ 33] = { 161, OID_crlDistributionPoints               }, // 551d1f
+	[ 34] = { 173, OID_msOutlookExpress                    }, // 2b0601040182371004
+	[ 35] = { 178, OID_sha384                              }, // 608648016503040202
+	[ 36] = { 179, OID_keyUsage                            }, // 551d0f
+	[ 37] = { 195, OID_md4WithRSAEncryption                }, // 2a864886f70d010104
+	[ 38] = { 198, OID_certPolicies                        }, // 551d20
+	[ 39] = { 200, OID_msSpOpusInfo                        }, // 2b06010401823702010c
+	[ 40] = { 201, OID_organizationName                    }, // 55040a
+	[ 41] = { 204, OID_messageDigest                       }, // 2a864886f70d010904
+	[ 42] = { 204, OID_sha384WithRSAEncryption             }, // 2a864886f70d01010c
+	[ 43] = { 212, OID_name                                }, // 550429
+	[ 44] = { 213, OID_commonName                          }, // 550403
+	[ 45] = { 220, OID_md4                                 }, // 2a864886f70d0204
+	[ 46] = { 226, OID_sha1WithRSAEncryption               }, // 2a864886f70d010105
+	[ 47] = { 227, OID_md5                                 }, // 2a864886f70d0205
+	[ 48] = { 228, OID_certAuthInfoAccess                  }, // 2b06010505070101
+	[ 49] = { 231, OID_msStatementType                     }, // 2b06010401823702010b
+	[ 50] = { 234, OID_organizationUnitName                }, // 55040b
+	[ 51] = { 237, OID_signingTime                         }, // 2a864886f70d010905
+	[ 52] = { 237, OID_sha512WithRSAEncryption             }, // 2a864886f70d01010d
+	[ 53] = { 244, OID_surname                             }, // 550404
+	[ 54] = { 245, OID_subjectAltName                      }, // 551d11
+	[ 55] = { 245, OID_givenName                           }, // 55042a
+	[ 56] = { 252, OID_sha224                              }, // 608648016503040204
+	[ 57] = { 255, OID_msIndirectData                      }, // 2b060104018237020104
+};
+
+
+生成1024位rsa私钥，保存为pem格式：
+
+openssl genpkey -out key.pem -algorithm rsa
+
+查看私钥内容：
+
+openssl pkey -in key.pem -text -noout
+
+生成对应的公钥：
+
+openssl pkey -in key.pem -pubout -out pubkey.pem
+
+查看对应的公钥：
+
+openssl pkey -pubin -in pubkey.pem -text -noout
+
+用私钥给文件签名：
+
+openssl pkeyutl -sign -in tos.txt -inkey key.pem -out tos.sig
+
+用公钥验证签名：
+
+openssl pkeyutl -verify -in tos.txt -sigfile tos.sig -pubin -inkey pubkey.pem 
+
+Signature Verified Successfully
+
+用公钥恢复签名文件的内容：
+
+openssl pkeyutl -verifyrecover -in tos.sig -pubin -inkey pubkey.pem 
+
+some secret
+
+用公钥加密文件：
+
+ openssl pkeyutl -encrypt -in tos.txt -pubin -inkey pubkey.pem -out tos.enc
+
+用私钥解密文件：
+
+openssl pkeyutl -decrypt -in tos.enc -inkey key.pem -out tos.dec
+
+
+=======================================================================================
+查看Android apk文件中证书的内容；
+openssl pcks7 –inform DER –in META-INF/CERT.RSA –noout –print_certs –text
